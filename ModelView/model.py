@@ -2,7 +2,6 @@ from PyQt5.QtCore import QAbstractListModel, QModelIndex, Qt
 from PyQt5.QtGui import QIcon
 
 
-
 class ListModel(QAbstractListModel):
     def __init__(self, data=None, parent=None):
         QAbstractListModel.__init__(self, parent)
@@ -26,7 +25,6 @@ class ListModel(QAbstractListModel):
 
     def setData(self, index, value, role=Qt.EditRole):
         if role == Qt.DecorationRole:
-            self._icons[index.row()] = value
             self.dataChanged.emit(index, index, [role])
             return True
         elif role == Qt.UserRole:
