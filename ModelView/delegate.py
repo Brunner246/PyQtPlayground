@@ -5,31 +5,28 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QStyledItemDelegate, QStyle, QApplication
 
 
-class ButtonState(IntEnum):
-    enabled = 1
-    disabled = 2
-
-
 class IconButtonDelegate(QStyledItemDelegate):
     iconClicked = pyqtSignal(QModelIndex)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.icon_state = ButtonState.disabled
-        self.icon = QIcon("ModelView/edit_icon_disabled.svg")
-        # self.icon.addFile("ModelView/edit_icon_enabled.svg", mode=QIcon.Normal, state=QIcon.On)
+        self.icon_state = QIcon.Off
 
     def paint(self, painter, option, index):
-        # image = index.model().data(index, Qt.DecorationRole)
         QApplication.style().drawControl(QStyle.CE_ItemViewItem, option, painter)
+
+        icon = QIcon()
+        icon.addFile("ModelView/resources/edit_icon_disabled.svg", mode=QIcon.Normal, state=QIcon.Off)
+        icon.addFile("ModelView/resources/edit_icon_enabled.svg", mode=QIcon.Normal, state=QIcon.On)
+
         icon_state = index.data(Qt.UserRole)
-        if icon_state == ButtonState.enabled:
-            self.icon = QIcon("ModelView/edit_icon_enabled.svg")
+        if icon_state == QIcon.On:
+            pixmap = icon.pixmap(30, 30, QIcon.Normal, QIcon.On)
         else:
-            self.icon = QIcon("ModelView/edit_icon_disabled.svg")
+            pixmap = icon.pixmap(30, 30, QIcon.Normal, QIcon.Off)
 
         icon_rect = QRect(option.rect.right() - 30, option.rect.top(), 30, option.rect.height())
-        self.icon.paint(painter, icon_rect)
+        painter.drawPixmap(icon_rect, pixmap)
 
         text_rect = QRect(option.rect.left(), option.rect.top(), option.rect.width() - 30, option.rect.height())
         text = index.data()
@@ -39,9 +36,9 @@ class IconButtonDelegate(QStyledItemDelegate):
         if event.type() == QEvent.MouseButtonRelease:
             if QRect(option.rect.right() - 30, option.rect.top(), 30, option.rect.height()).contains(event.pos()):
                 icon_state = index.data(Qt.UserRole)
-                if icon_state == ButtonState.disabled:
-                    model.setData(index, ButtonState.enabled, Qt.UserRole)
+                if icon_state == QIcon.Off:
+                    model.setData(index, QIcon.On, Qt.UserRole)
                 else:
-                    model.setData(index, ButtonState.disabled, Qt.UserRole)
+                    model.setData(index, QIcon.Off, Qt.UserRole)
                 self.iconClicked.emit(index)
         return True

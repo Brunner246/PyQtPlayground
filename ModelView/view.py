@@ -26,7 +26,7 @@ class ExampleView(QMainWindow):
         self.signal_slot_connections()
 
     def init_ui(self):
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 1_000, 800)
         self.setWindowTitle('Simple List Model Example')
         self.show()
 
