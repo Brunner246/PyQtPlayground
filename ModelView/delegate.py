@@ -17,11 +17,11 @@ class IconButtonDelegate(QStyledItemDelegate):
         super().__init__(parent)
         self.icon_state = ButtonState.disabled
         self.icon = QIcon("ModelView/edit_icon_disabled.svg")
+        # self.icon.addFile("ModelView/edit_icon_enabled.svg", mode=QIcon.Normal, state=QIcon.On)
 
     def paint(self, painter, option, index):
         # image = index.model().data(index, Qt.DecorationRole)
         QApplication.style().drawControl(QStyle.CE_ItemViewItem, option, painter)
-
         icon_state = index.data(Qt.UserRole)
         if icon_state == ButtonState.enabled:
             self.icon = QIcon("ModelView/edit_icon_enabled.svg")
@@ -44,4 +44,4 @@ class IconButtonDelegate(QStyledItemDelegate):
                 else:
                     model.setData(index, ButtonState.disabled, Qt.UserRole)
                 self.iconClicked.emit(index)
-        return False
+        return True

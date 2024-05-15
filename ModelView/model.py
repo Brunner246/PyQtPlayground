@@ -38,6 +38,7 @@ class ListModel(QAbstractListModel):
 
     def connect_delegate(self, delegate):
         delegate.iconClicked.connect(lambda: print(f"hello from delegate"))
+        delegate.iconClicked.connect(self.item_clicked)
 
     def item_clicked(self, index: QModelIndex):
         if self.data(index, Qt.UserRole) == ButtonState.disabled:
