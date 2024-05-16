@@ -8,9 +8,6 @@ class ListModel(QAbstractListModel):
         self._data = data or []
         self._icon_states = [QIcon.Off for _ in self._data]
         self._previous_index: QModelIndex = None
-        self._icon = QIcon()
-        self._icon.addFile("ModelView/resources/edit_icon_disabled.svg", mode=QIcon.Normal, state=QIcon.Off)
-        self._icon.addFile("ModelView/resources/edit_icon_enabled.svg", mode=QIcon.Normal, state=QIcon.On)
 
     def rowCount(self, parent=None):
         return len(self._data)
@@ -18,8 +15,6 @@ class ListModel(QAbstractListModel):
     def data(self, index, role=Qt.DisplayRole):
         if role == Qt.DisplayRole:
             return self._data[index.row()]
-        elif role == Qt.DecorationRole:
-            return self._icon
         elif role == Qt.UserRole:
             return self._icon_states[index.row()]
 
@@ -36,8 +31,10 @@ class ListModel(QAbstractListModel):
         return super().flags(index) | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
     def connect_delegate(self, delegate):
-        delegate.iconClicked.connect(lambda: print(f"hello from delegate"))
+        delegate.iconClicked.connect(lambda: print(f"hello from delegate - icon clicked"))
         delegate.iconClicked.connect(self.item_clicked)
+
+        delegate.textClicked.connect(lambda: print(f"hello from delegate - text clicked"))
 
     def item_clicked(self, index: QModelIndex):
         if self.data(index, Qt.UserRole) == QIcon.Off:
