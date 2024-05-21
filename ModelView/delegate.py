@@ -2,6 +2,13 @@ from PyQt5.QtCore import QEvent, QRect, Qt, pyqtSignal, QModelIndex
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QStyledItemDelegate, QStyle, QApplication
 
+"""
+Qt::ItemDataRole https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum
+        # the Qt::ItemDataRole enumeration defines the various roles that can be used to access and
+        # modify data in a model. Each role represents a different aspect of the data associated
+        # with an item in the model.
+"""
+
 
 class IconButtonDelegate(QStyledItemDelegate):
     iconClicked = pyqtSignal(QModelIndex)
@@ -15,7 +22,10 @@ class IconButtonDelegate(QStyledItemDelegate):
         self.icon_state = QIcon.Off
 
     def paint(self, painter, option, index):
-        QApplication.style().drawControl(QStyle.CE_ItemViewItem, option, painter)
+        """
+        https://doc.qt.io/qt-5/qstyleditemdelegate.html#paint
+        """
+        # QApplication.style().drawControl(QStyle.CE_ItemViewItem, option, painter)
 
         icon_state = index.data(Qt.UserRole)
         if icon_state == QIcon.On:
@@ -31,12 +41,19 @@ class IconButtonDelegate(QStyledItemDelegate):
         painter.drawText(text_rect, Qt.AlignVCenter, text)
 
     def editorEvent(self, event, model, option, index):
+        """
+        https://doc.qt.io/qt-5/qstyleditemdelegate.html#editorEvent
+        """
         if event.type() == QEvent.MouseButtonRelease:
             if QRect(option.rect.right() - 24, option.rect.top(), 24, option.rect.height()).contains(event.pos()):
                 self.icon_clicked(index, model)
-            elif QRect(option.rect.left(), option.rect.top(), option.rect.width() - 24, option.rect.height()).contains(event.pos()):
+            elif QRect(option.rect.left(), option.rect.top(), option.rect.width() - 24, option.rect.height()).contains(
+                    event.pos()):
                 self.text_clicked(index)
         return True
+
+    def sizeHint(self, option, index):
+        return super().sizeHint(option, index)
 
     def text_clicked(self, index):
         self.textClicked.emit(index)
